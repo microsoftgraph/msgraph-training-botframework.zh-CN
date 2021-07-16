@@ -1,27 +1,27 @@
 ---
-ms.openlocfilehash: 8cec789dc7403640656804d3c3b5be6023ace290
-ms.sourcegitcommit: e0d9b18d2d4cbeb4a48890f3420a47e6a90abc53
+ms.openlocfilehash: ace41258fd92c1bfb7ed9bbe10ef71fb6563d145
+ms.sourcegitcommit: 59d94851101b121dc89c0f6ccf3b923e35d8efe8
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 11/17/2020
-ms.locfileid: "49347762"
+ms.lasthandoff: 07/15/2021
+ms.locfileid: "53446742"
 ---
-# <a name="microsoft-graph-training-module---build-bot-framework-bots-with-the-microsoft-graph-sdk"></a>Microsoft Graph 培训模块-使用 Microsoft Graph SDK 构建 Bot 框架 bot
+# <a name="microsoft-graph-training-module---build-bot-framework-bots-with-the-microsoft-graph-sdk"></a>Microsoft Graph培训模块 - 使用 Microsoft Graph SDK 生成自动程序
 
-本模块将介绍如何使用 Microsoft Graph SDK 通过 Microsoft Bot 框架构建 bot 来访问 Office 365 中的数据。
+本模块将向您介绍使用 Microsoft Graph SDK，以通过Office 365聊天机器人来访问 Microsoft Bot Framework。
 
-## <a name="lab---build-bot-framework-obts-with-the-microsoft-graph-sdk"></a>使用 Microsoft Graph SDK 的实验室构建机器人框架 obts
+## <a name="lab---build-bot-framework-bots-with-the-microsoft-graph-sdk"></a>实验室 - 使用 Microsoft Graph SDK 生成自动程序框架
 
-在此实验室中，将创建一个 Bot 框架项目，以使用 Microsoft Graph 访问 Microsoft 365 中的数据。
+在此实验中，你将创建一个 Bot Framework 项目，以使用 Microsoft Microsoft 365访问 Graph。
 
-- [Bot 框架 Microsoft Graph 教程](https://docs.microsoft.com/graph/tutorials/bot-framework)
+- [Bot Framework Microsoft Graph教程](https://docs.microsoft.com/graph/tutorials/bot-framework)
 
 ## <a name="completed-sample"></a>已完成示例
 
-如果只想使用此实验室生成已完成的示例，可以在此处找到它。
+如果只需要通过此实验室生成已完成的示例，可以在此处找到它。
 
 - [已完成项目](demo)
 
 ## <a name="disclaimer"></a>免责声明
 
-**此代码 _按_ 原样提供，无需任何明示或暗示的担保，包括对特定目的适用性、适销性或不侵权的任何暗示担保。**
+**此 _代码的提供_ 是一样的，不提供任何明示或暗示的担保，包括对特定用途适用性、适用性或不侵权的任何默示担保。**

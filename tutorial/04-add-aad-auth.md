@@ -1,35 +1,35 @@
 ---
-ms.openlocfilehash: 05b3223967bf2a6d321c00cca079cc5c5b8ff0db
-ms.sourcegitcommit: e0d9b18d2d4cbeb4a48890f3420a47e6a90abc53
+ms.openlocfilehash: f8b2a2b4e1c5d42c74398616513204559058a5dc
+ms.sourcegitcommit: 59d94851101b121dc89c0f6ccf3b923e35d8efe8
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 11/17/2020
-ms.locfileid: "49347760"
+ms.lasthandoff: 07/15/2021
+ms.locfileid: "53446790"
 ---
 <!-- markdownlint-disable MD002 MD041 -->
 
-在本练习中，你将使用 Bot 框架的 **OAuthPrompt** 在 Bot 中实现身份验证，并获取用于调用 MICROSOFT Graph API 的访问令牌。
+在此练习中，你将使用 Bot Framework 的 **OAuthPrompt** 在机器人中实现身份验证，并获取用于调用 Microsoft Graph API 的访问令牌。
 
-1. 打开 **。/appsettings.js** ，并进行以下更改。
+1. 打开 **"appsettings.js"，** 然后进行以下更改。
 
-    - 将值更改 `MicrosoftAppId` 为您的 **图形日历机器人** 应用注册的应用程序 ID。
-    - 将值更改 `MicrosoftAppPassword` 为您的 **图形日历机器人** 客户端密码。
-    - 将名为的值添加为 `ConnectionName` `GraphBotAuth` 。
+    - 将 的值 `MicrosoftAppId` 更改为你的日历自动程序Graph **的应用程序** ID。
+    - 将 的值更改为 `MicrosoftAppPassword` 您的日历 **Graph自动程序** 客户端密码。
+    - 添加一个名为 `ConnectionName` 的值，值为 `GraphBotAuth` 。
 
     :::code language="json" source="../demo/GraphCalendarBot/appsettings.example.json":::
 
     > [!NOTE]
-    > 如果你使用的值不是 `GraphBotAuth` Azure 门户的 **OAuth 连接设置** 中条目的名称，请使用该条目的值 `ConnectionName` 。
+    > 如果你使用的值不用于 Azure 门户中 `GraphBotAuth` **OAuth Connection** 设置的名称，请对条目使用 `ConnectionName` 该值。
 
-## <a name="implement-dialogs"></a>实现对话
+## <a name="implement-dialogs"></a>实现对话框
 
-1. 在名为 " **对话**" 的项目的根目录中创建一个新目录。 在名为 **LogoutDialog.cs** 的 **/Dialogs** 目录中创建一个新文件，并添加以下代码。
+1. 在名为 Dialogs 的项目的根目录中 **新建一个目录**。 在 **./Dialogs** 目录中创建一个名为 **LogoutDialog.cs** 的新文件并添加以下代码。
 
     :::code language="csharp" source="../demo/GraphCalendarBot/Dialogs/LogoutDialog.cs" id="LogoutDialogSnippet":::
 
-    此对话框为要从其派生的自动程序中的所有其他对话框提供基类。 这使用户可以注销，无论它们位于机器人对话框中的什么位置。
+    此对话框为自动程序中派生的所有其他对话框提供基类。 这允许用户注销，而不管他们在机器人对话框中的什么位置。
 
-1. 在名为 **MainDialog.cs** 的 **/Dialogs** 目录中创建一个新文件，并添加以下代码。
+1. 在名为 **MainDialog.cs** 的 **./Dialogs** 目录中创建新文件并添加以下代码。
 
     ```csharp
     using System.Collections.Generic;
@@ -233,80 +233,84 @@ ms.locfileid: "49347760"
     }
     ```
 
-    请花点时间查看此代码。
+    花些时间查看此代码。
 
-    - 在构造函数中，它将设置一个 [WaterfallDialog](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-waterfall-dialogs?view=azure-bot-service-4.0) ，其中包含一组按顺序发生的步骤。
-        - 在 `LoginPromptStepAsync` 其中发送 **OAuthPrompt**。 如果用户未登录，则会向用户发送 UI 提示。
-        - 在 `ProcessLoginStepAsync` 该示例中检查登录是否成功，并发送一条确认消息。
-        - 在中，将 `PromptUserStepAsync` 使用可用命令发送 **ChoicePrompt** 。
-        - 在 `CommandStepAsync` 其中保存用户的选择，然后重新发送 **OAuthPrompt**。
-        - 在 `ProcessStepAsync` 此过程中，将根据收到的命令执行操作。
-        - 在 `ReturnToPromptStepAsync` 该示例中，将启动瀑布，但传递一个标志以跳过初始用户登录。
+    - 在构造函数中，它使用一组按顺序排列的步骤设置 [一个"瀑布](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-waterfall-dialogs?view=azure-bot-service-4.0) 图"。
+        - In `LoginPromptStepAsync` it sends an **OAuthPrompt**. 如果用户未登录，这会向用户发送 UI 提示。
+        - In `ProcessLoginStepAsync` it checks if the login was successful and sends a confirmation.
+        - In `PromptUserStepAsync` it sends a **ChoicePrompt** with the available commands.
+        - In `CommandStepAsync` it saves the user's choice， then resends an **OAuthPrompt**.
+        - In `ProcessStepAsync` it takes action based on the command received.
+        - In `ReturnToPromptStepAsync` it starts the waterfall over， but passes a flag to skip the initial user login.
 
 ## <a name="update-calendarbot"></a>更新 CalendarBot
 
 下一步是更新 **CalendarBot** 以使用这些新对话框。
 
-1. 打开 **/Bots/CalendarBot.cs** ，并使用以下代码替换其全部内容。
+1. 打开 **./Bots/CalendarBot.cs，** 并将其全部内容替换为以下代码。
 
     :::code language="csharp" source="../demo/GraphCalendarBot/Bots/CalendarBot.cs" id="CalendarBotSnippet":::
 
     以下是更改的简短摘要。
 
-    - 将 **CalendarBot** 类更改为模板类，并接收 **对话框**。
-    - 将 **CalendarBot** 类更改为扩展 **TeamsActivityHandler**，使其能够在 Microsoft 团队中登录。
-    - 添加了其他方法重写以启用身份验证。
+    - 将 **CalendarBot** 类更改为模板类，以接收 **Dialog**。
+    - 更改 **了 CalendarBot** 类以扩展 **TeamsActivityHandler，** 允许其登录 Microsoft Teams。
+    - 添加了其他方法替代以启用身份验证。
 
 ## <a name="update-startupcs"></a>更新 Startup.cs
 
-最后一步是更新方法， `ConfigureServices` 以添加身份验证所需的服务和新对话框。
+最后一步是更新 方法， `ConfigureServices` 以添加身份验证所需的服务和新对话框。
 
-1. 打开 **./Startup.cs** 并 `services.AddTransient<IBot, Bots.CalendarBot>();` 从方法中删除该行 `ConfigureServices` 。
+1. 打开 **./Startup.cs，** 然后从 `services.AddTransient<IBot, Bots.CalendarBot>();` 方法中删除 `ConfigureServices` 行。
 
-1. 将以下代码插入到方法的末尾 `ConfigureServices` 。
+1. 在 方法的末尾插入以下 `ConfigureServices` 代码。
 
     :::code language="csharp" source="../demo/GraphCalendarBot/Startup.cs" id="ConfigureServiceSnippet":::
 
 ## <a name="test-authentication"></a>测试身份验证
 
-1. 保存所有更改并使用启动机器人 `dotnet run` 。
+1. 保存所有更改，然后使用 启动自动程序 `dotnet run` 。
 
-1. 打开 "Bot 框架" 模拟器。 选择 " **文件** " 菜单，然后选择 " **新建 Bot 配置 ...**"。
+1. 打开Bot Framework Emulator。 选择左&#9881;齿轮图标。
 
-1. 按如下所示填写字段。
+1. 输入 ngrok 安装的本地路径，并启用本地地址旁路 **ngrok** 和运行 **ngrok** Emulator启动选项。 选择“**保存**”。
 
-    - **Bot 名称：**`CalendarBot`
+1. 选择"**文件"** 菜单，然后选择"**新建自动程序配置..."。**
+
+1. 填写字段，如下所示。
+
+    - **自动程序名称：**`CalendarBot`
     - **终结点 URL：**`https://localhost:3978/api/messages`
-    - **Microsoft 应用程序 id：** 您的 **图形日历机器人** 应用注册的应用程序 id
-    - **Microsoft 应用密码：** 您的 **图形日历机器人** 客户端密码
-    - **加密存储在你的 bot 配置中的密钥：** 了
+    - **Microsoft 应用 ID：** 日历自动程序Graph **的应用程序** ID
+    - **Microsoft 应用密码：Graph****日历自动程序** 客户端密码
+    - **对存储在自动程序配置中的密钥进行加密：** 已启用
 
-    ![新机器人配置对话框的屏幕截图](images/new-bot-config.png)
+    !["新建自动程序配置"对话框的屏幕截图](images/new-bot-config.png)
 
-1. 选择 " **保存并连接**"。 在仿真程序连接之后，您应该会看到 `Welcome to Microsoft Graph CalendarBot. Type anything to get started.`
+1. 选择 **"保存并连接"。** 在仿真器连接后，你应该会看到 `Welcome to Microsoft Graph CalendarBot. Type anything to get started.`
 
-1. 键入一些文本并将其发送到机器人。 机器人将使用登录提示进行响应。
+1. 键入一些文本并将其发送到机器人。 机器人使用登录提示进行响应。
 
-1. 选择 " **登录** " 按钮。 仿真程序将提示您确认以开头的 URL `oauthlink://https://token.botframeworkcom` 。 选择 " **确认** " 以继续。
+1. 选择" **登录"** 按钮。 仿真器会提示你确认以 开头的 `oauthlink://https://token.botframeworkcom` URL。 选择 **"确认** "继续。
 
-1. 在弹出窗口中，使用 Microsoft 365 帐户登录。 查看请求的权限并接受。
+1. 在弹出窗口中，使用你的 Microsoft 365 帐户登录。 查看请求的权限并接受。
 
-1. 完成身份验证和同意后，弹出窗口将提供验证代码。 复制代码并关闭窗口。
+1. 身份验证和同意完成后，弹出窗口将提供验证代码。 复制代码并关闭窗口。
 
-    ![Bot 框架仿真程序的屏幕截图验证代码](images/validation-code.png)
+    ![验证代码Bot Framework Emulator屏幕截图](images/validation-code.png)
 
-1. 在聊天窗口中输入验证代码，以完成登录。
+1. 在聊天窗口中输入验证代码以完成登录。
 
-    ![与示例 bot 的登录会话的屏幕截图](images/bot-login.png)
+    ![与示例自动程序进行登录对话的屏幕截图](images/bot-login.png)
 
-1. 如果选择 " **显示令牌** " 按钮 (或键入 `show token`) ，则 bot 将显示访问令牌。  (或键入) 的 " **注销** " 按钮 `log out` 将注销。
+1. 如果选择 **"显示令牌** "按钮 (或键入) ，则自动 `show token` 程序将显示访问令牌。 " **注销"** 按钮 (键入) `log out` 将注销。
 
 > [!TIP]
-> 在使用 bot 启动对话时，您可能会在 Bot 框架仿真器中收到以下错误消息。
+> 与机器人开始对话时，Bot Framework Emulator消息中出现以下错误消息。
 >
 > ```text
 > Failed to generate an actual sign-in link: Error: Failed to connect to ngrok instance for OAuth postback URL:
 > FetchError: request to http://127.0.0.1:4041/api/tunnels failed, reason: connect ECONNREFUSED 127.0.0.1:4041
 > ```
 >
-> 如果发生这种情况，请关闭仿真程序并重新启动它。
+> 如果发生这种情况，请确保在仿真器设置中启用"Emulator启动时运行 **ngrok"** 选项，然后重新启动仿真器。
